@@ -59,3 +59,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 실패하는 테스트가 요구하지 않는 프로덕션 코드는 작성하지 마세요. 프론트엔드/백엔드
 경계를 넘나드는 사용자 흐름에는 `e2e/`(Playwright)를, 한 계층에 국한된 로직에는 각
 계층의 `tests/` 디렉터리(Vitest)를 사용하세요.
+
+## 코드 컨벤션
+- Typescript strict mode
+- 함수형 컴포넌트 + Hooks
+- 에러는 Zod 스키마로 검증
+- 한글 주석 허용
