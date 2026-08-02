@@ -52,25 +52,9 @@ describe('POST /api/tasks', () => {
     })
 
     describe('PATCH /api/tasks/:id', () => {
-        let authToken: string
         let taskId: string
-        beforeAll(async () => {
-            // 사용자 등록 및 로그인
-            const registerRes = await app.request('/api/auth/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: 'test@example.com',
-                    password: 'password123',
-                })
-            })
-            expect(registerRes.status).toBe(201)
-            const registerData = await registerRes.json()
-            authToken = registerData.token
 
-            // 태스크 생성
+        beforeAll(async () => {
             const createTaskRes = await app.request('/api/tasks', {
                 method: 'POST',
                 headers: {
@@ -105,25 +89,9 @@ describe('POST /api/tasks', () => {
     })
 
     describe('DELETE /api/tasks/:id', () => {
-        let authToken: string
         let taskId: string
 
         beforeAll(async () => {
-            // 사용자 등록 및 로그인
-            const registerRes = await app.request('/api/auth/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: 'test@example.com',
-                    password: 'password123',
-                })
-            })
-            expect(registerRes.status).toBe(201)
-            const registerData = await registerRes.json()
-            authToken = registerData.token
-            //태스크 생성
             const createTaskRes = await app.request('/api/tasks', {
                 method: 'POST',
                 headers: {
