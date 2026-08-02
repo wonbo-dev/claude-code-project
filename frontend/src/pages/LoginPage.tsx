@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Login, { type LoginCredentials } from '../components/Login'
 import { login } from '../lib/api'
+import { setToken } from '../lib/auth'
 
 function LoginPage() {
   const navigate = useNavigate()
@@ -10,7 +11,8 @@ function LoginPage() {
   const handleLogin = async (credentials: LoginCredentials) => {
     setError(null)
     try {
-      await login(credentials)
+      const result = await login(credentials)
+      setToken(result.token) // 이후 태스크 API 호출에 사용
       // 로그인 성공 → 대시보드로 이동
       navigate('/dashboard')
     } catch {

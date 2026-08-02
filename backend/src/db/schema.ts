@@ -11,7 +11,7 @@ export const tasks = sqliteTable('tasks', {
     id: integer('id').primaryKey({ autoIncrement: true }),
     title: text('title').notNull(),
     description: text('description'),
-    status: text('status', { enum: ['pending', 'completed'] }).notNull().default('pending'),
+    status: text('status', { enum: ['pending', 'in_progress', 'completed'] }).notNull().default('pending'),
     userId: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
     createdAt: integer('created_at', { mode: 'timestamp_ms' }).notNull().$defaultFn(() => new Date()),
 })

@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { register } from '../lib/api'
+import { setToken } from '../lib/auth'
 
 function RegisterPage() {
   const navigate = useNavigate()
@@ -21,7 +22,8 @@ function RegisterPage() {
 
     setSubmitting(true)
     try {
-      await register({ email, password })
+      const result = await register({ email, password })
+      setToken(result.token) // 이후 태스크 API 호출에 사용
       // 회원가입 성공 → 대시보드로 이동
       navigate('/dashboard')
     } catch {
