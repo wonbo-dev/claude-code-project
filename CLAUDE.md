@@ -8,19 +8,49 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 현재 상태
 
-이 저장소는 초기 스캐폴드 단계입니다. 디렉터리 골격과 기술 스택은 정해졌지만, 실제
-애플리케이션 코드, 의존성 매니페스트(`package.json` 등), 설정된 테스트 러너는 아직
-거의 없습니다. 작업을 시작할 때는 기능 구현과 함께(또는 그 전에) 매니페스트와 테스트
-러너부터 세팅해야 할 가능성이 높습니다. 실제 명령어가 생기면 아래 빌드/린트/테스트
-명령을 이 파일에 채워 넣으세요.
+세 계층 모두 스캐폴드가 완료되어 각자 `package.json`과 설정된 테스트 러너를 갖추고
+있습니다. 구현된 기능:
+
+- **인증** — 회원가입/로그인(`/api/auth/register`, `/api/auth/login`), bcrypt 비밀번호
+  해싱, JWT 발급. 프론트엔드는 토큰을 `localStorage`(`taskflow_token`)에 저장합니다.
+- **태스크 CRUD** — 목록/생성/상태 변경/삭제(`/api/tasks`), JWT 인증 필요.
+- **프론트엔드** — 로그인/회원가입/대시보드 페이지, React Router 기반 라우팅.
+
+각 계층은 서로 독립적으로 의존성을 설치·실행합니다(루트에 통합 스크립트 없음).
 
 ## 구조
 
 세 개의 계층으로 나뉘며, 각 계층은 자체 테스트를 가집니다:
 
-- `backend/` — HTTP API. 단위·통합 테스트는 `backend/tests/`.
-- `frontend/` — React UI. 컴포넌트 테스트는 `frontend/tests/`.
-- `e2e/` — 프론트엔드와 백엔드를 아우르는 엔드투엔드 테스트.
+- `backend/` — HTTP API. 단위·통합 테스트는 `backend/tests/`. 개발/실행 포트 `3000`.
+- `frontend/` — React UI. 컴포넌트 테스트는 `frontend/tests/`. 개발 서버 포트 `5173`.
+- `e2e/` — 프론트엔드와 백엔드를 아우르는 엔드투엔드 테스트. Playwright 설정은
+  저장소 루트의 `playwright.config.ts`.
+
+## 명령어
+
+각 계층 디렉터리에서 실행합니다(별도 명시가 없으면 해당 디렉터리 기준).
+
+**백엔드** (`backend/`)
+
+- `npm run dev` — 개발 서버(tsx watch, 포트 3000)
+- `npm run start` — 서버 실행(tsx)
+- `npm test` — 단위·통합 테스트(`vitest run`)
+- `npm run test:watch` — 감시 모드 / `npm run test:coverage` — 커버리지
+
+**프론트엔드** (`frontend/`)
+
+- `npm run dev` — Vite 개발 서버(포트 5173)
+- `npm run build` — 타입 체크 + 빌드(`tsc -b && vite build`)
+- `npm run lint` — ESLint(`eslint .`)
+- `npm test` — 컴포넌트 테스트(`vitest run`) / `npm run test:watch` — 감시 모드
+- `npm run preview` — 빌드 결과 미리보기
+
+**E2E** (저장소 루트)
+
+- `npx playwright test` — 전체 E2E 실행. `playwright.config.ts`의 `webServer` 설정이
+  백엔드(3000)와 프론트엔드(5173)를 자동 기동하므로 서버를 따로 띄울 필요 없음.
+- `npx playwright test e2e/tasks.spec.ts` — 특정 스펙만 실행.
 
 ## 백엔드 스택
 
