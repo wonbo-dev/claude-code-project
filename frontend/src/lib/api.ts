@@ -1,5 +1,11 @@
-// 백엔드 API 호출 헬퍼. Vite 프록시를 통해 /api → http://localhost:3000
+// 백엔드 API 호출 헬퍼.
+// - 로컬 개발: VITE_API_BASE_URL 미설정 → 상대 경로(/api)로 호출하고 Vite 프록시가 localhost:3000으로 전달.
+// - 배포(Vercel): VITE_API_BASE_URL에 백엔드 절대 URL(예: Railway) 지정 → 그 도메인으로 직접 호출(CORS 필요).
 import { getToken } from './auth'
+
+// 끝의 슬래시는 제거해 `//api` 같은 이중 슬래시를 방지한다.
+const API_BASE = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '')
+const apiUrl = (path: string) => `${API_BASE}${path}`
 
 export interface AuthCredentials {
   email: string
@@ -25,7 +31,7 @@ export interface Task {
 // --- 인증 ---
 
 async function postAuth(path: string, body: AuthCredentials): Promise<AuthResult> {
-  const res = await fetch(`/api/auth/${path}`, {
+  const res = await fetch(apiUrl(`/api/auth/${path}`), {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body),
@@ -52,13 +58,13 @@ function authHeaders(): HeadersInit {
 }
 
 export async function listTasks(): Promise<Task[]> {
-  const res = await fetch('/api/tasks', { headers: authHeaders() })
+  const res = await fetch(apiUrl('/api/tasks'), { headers: authHeaders() })
   if (!res.ok) throw new Error(`TASKS_LIST_FAILED_${res.status}`)
   return (await res.json()) as Task[]
 }
 
 export async function createTask(input: { title: string; description?: string }): Promise<Task> {
-  const res = await fetch('/api/tasks', {
+  const res = await fetch(apiUrl('/api/tasks'), {
     method: 'POST',
     headers: authHeaders(),
     body: JSON.stringify(input),
@@ -68,7 +74,7 @@ export async function createTask(input: { title: string; description?: string })
 }
 
 export async function updateTaskStatus(id: number, status: TaskStatus): Promise<Task> {
-  const res = await fetch(`/api/tasks/${id}`, {
+  const res = await fetch(apiUrl(`/api/tasks/${id}`), {
     method: 'PATCH',
     headers: authHeaders(),
     body: JSON.stringify({ status }),
@@ -78,7 +84,7 @@ export async function updateTaskStatus(id: number, status: TaskStatus): Promise<
 }
 
 export async function deleteTask(id: number): Promise<void> {
-  const res = await fetch(`/api/tasks/${id}`, {
+  const res = await fetch(apiUrl(`/api/tasks/${id}`), {
     method: 'DELETE',
     headers: authHeaders(),
   })
