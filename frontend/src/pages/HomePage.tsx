@@ -20,7 +20,7 @@ function HomePage() {
           로그인
         </Link>
         <Link
-          to="/signup"
+          to="/register"
           className="rounded-md border border-gray-300 px-6 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800"
         >
           회원가입

@@ -26,8 +26,17 @@ export default defineConfig({
     },
   ],
 
-  // 테스트 실행 전 개발 서버를 자동 기동한다.
+  // 테스트 실행 전 개발 서버(프론트엔드 + 백엔드)를 자동 기동한다.
   webServer: [
+    {
+      // 백엔드는 in-memory DB → 매 실행마다 새로 기동해 깨끗한 상태 보장
+      // (기존 서버 재사용 시 회원가입 테스트가 중복 이메일 409로 실패)
+      command: 'npm run start',
+      cwd: './backend',
+      url: 'http://localhost:3000',
+      reuseExistingServer: false,
+      timeout: 120_000,
+    },
     {
       command: 'npm run dev',
       cwd: './frontend',
@@ -35,15 +44,5 @@ export default defineConfig({
       reuseExistingServer: !process.env.CI,
       timeout: 120_000,
     },
-    // TODO: 백엔드 서버 진입점(@hono/node-server의 serve() 호출)과
-    //       start 스크립트가 추가되면 아래 블록을 활성화한다.
-    //       현재 backend/src/app.ts는 Hono 앱을 export만 하고 서버를 기동하지 않는다.
-    // {
-    //   command: 'npm run start',
-    //   cwd: './backend',
-    //   url: 'http://localhost:3000',
-    //   reuseExistingServer: !process.env.CI,
-    //   timeout: 120_000,
-    // },
   ],
 })
